@@ -35,7 +35,8 @@ router.post('/login', (async (req, res, next) => {
 
 router.get('/recover/users', (async (req, res, next) => {
     try {
-        let result = await controller.listUsers().catch(err => { throw new Error(err) })
+
+        let result = await controller.listUsers(req.query.profile).catch(err => { throw new Error(err) })
         res.status(200).send({
             message: 'Usuários recebidos com sucesso',
             data: result

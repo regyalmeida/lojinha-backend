@@ -67,10 +67,10 @@ let registerUser = function (name, user, password, profile) {
 Retrieves all existing users documents from the 
 database
 ------------------------------------------------------- */
-let listUsers = function () {
+let listUsers = function (profile) {
     return new Promise(async function (resolve, reject) {
         try {
-            let usuarios = await User.find({}, {
+            let usuarios = await User.find({profile: profile}, {
                 __v: 0
             })
 
