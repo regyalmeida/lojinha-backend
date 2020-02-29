@@ -28,7 +28,9 @@ let registerProduct = function (name, description, price) {
                 name: name,
                 description: description,
                 price: price,
-                imageName: itemName
+                imageName: itemName,
+                category: category,
+                quantity: quantity
             })
             let product = await newProduct.save()
             return resolve(product)
@@ -42,10 +44,10 @@ let registerProduct = function (name, description, price) {
 /* -------------------- recoverProduct ----------------------- 
 
 ------------------------------------------------------- */
-let recoverProduct = function () {
+let recoverProduct = function (id) {
     return new Promise(async function (resolve, reject) {
         try {
-            let products = await Product.find({_id:'5e571f7d2d9781665f6062fd'}, {
+            let products = await Product.find({_id: id}, {
                 __v: 0
             })
 

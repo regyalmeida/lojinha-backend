@@ -6,7 +6,7 @@ const upload = require('../connectors/localStorageConnector').upload
 
 router.post('/register',  upload.single('file'), (async (req, res, next) => {
     try {
-        let result = await controller.registerProduct(req.body.name, req.body.description, req.body.price).catch(err => { throw new Error(err) })
+        let result = await controller.registerProduct(req.body.name, req.body.description, req.body.price, req.body.category, req.body.quantity).catch(err => { throw new Error(err) })
         res.status(200).send({
             message: 'Produto cadastrado com sucesso',
             data: {
@@ -14,7 +14,9 @@ router.post('/register',  upload.single('file'), (async (req, res, next) => {
                 name: result.name,
                 desciption: result.desciption,
                 price: result.price,
-                // image: result.image
+                image: result.imageName,
+                category: result.category,
+                quantity: result. quantity
             }
         })
     } catch (err) {
@@ -24,9 +26,14 @@ router.post('/register',  upload.single('file'), (async (req, res, next) => {
 
 router.get('/recover/', (async (req, res, next) => {
     try {
-        let result = await controller.recoverProduct(req.query.id).catch(err => { throw new Error(err) })
+        if(req.query.id) {
+            var result = await controller.recoverProduct(req.query.id).catch(err => { throw new Error(err) })
+        }
+        else {
+            var result = await controller.listProducts().catch(err => { throw new Error(err) })
+        }
         res.status(200).send({
-            message: 'Produto recuperado com sucesso',
+            message: 'Produto(s) recuperado(s) com sucesso',
             data: result
         })
     } catch (err) {
@@ -34,18 +41,6 @@ router.get('/recover/', (async (req, res, next) => {
     }
 }))
 
-router.post('/login', (async (req, res, next) => {
-    try {
-        let result = await controller.loginUser(req.body.user, req.body.password).catch(err => { throw new Error(err) })
-        res.status(200).send({
-            message: result[0],
-            autenticado: result[1],
-            data: result[2]
-        })
-    } catch (err) {
-        res.status(500).send('Não foi possivel logar o usuário!');
-    }
-}))
 
 router.get('/recover/users', (async (req, res, next) => {
     try {
