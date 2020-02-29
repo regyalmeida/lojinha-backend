@@ -7,7 +7,7 @@ const COS_BUCKET = 'lojinha'
 /* --------------- registerProduct ----------------------- 
 Create a new product document register and on the database
 ------------------------------------------------------- */
-let registerProduct = function (name, description, price) {
+let registerProduct = function (name, description, price, category, quantity) {
     return new Promise(async (resolve, reject) => {
         try {
             let productExists = await Product.findOne({

@@ -68,20 +68,20 @@ function createBucket(bucketName) {
    
 }
 
-function createImageFile(bucketName, itemName, fileText) {
+async function createImageFile(bucketName, itemName, fileText) {
     try {
         console.log(`Creating new item: ${itemName}`);
     
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             cosClient.putObject({
                 Bucket: bucketName, 
                 Key: itemName+".jpg", 
                 Body: fileText
-            }, function(err, data) {
+            }, async function(err, data) {
                 if(err) reject(err)
                 else {
-                    fileController.unlinkFileFromFolder(fileText)
-                    resolve(itemName)
+                    await fileController.unlinkFileFromFolder()
+                    return resolve(itemName)
                 }
             })
         })
