@@ -55,7 +55,7 @@ router.put('/update', (async (req, res, next) => {
 
 router.put('/delete', (async (req, res, next) => {
     try {
-        let result = await controller.inativeProduct(req.body.id, req.body.name, req.body.description, req.body.price, req.body.category, req.body.quantity, req.body.imageName).catch(err => { throw new Error(err) })
+        let result = await controller.inativeProduct(req.body._id, req.body.name, req.body.description, req.body.price, req.body.category, req.body.quantity, req.body.imageName).catch(err => { throw new Error(err) })
         res.status(200).send({
             message: 'Produto deletado com sucesso',
             data: result
