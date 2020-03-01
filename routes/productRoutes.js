@@ -41,41 +41,27 @@ router.get('/recover/', (async (req, res, next) => {
     }
 }))
 
-
-router.get('/recover/users', (async (req, res, next) => {
+router.put('/update', (async (req, res, next) => {
     try {
-
-        let result = await controller.listUsers(req.query.profile).catch(err => { throw new Error(err) })
+        let result = await controller.updateProduct(req.body.id, req.body.name, req.body.description, req.body.price, req.body.category, req.body.quantity, req.body.imageName, req.body.flag).catch(err => { throw new Error(err) })
         res.status(200).send({
-            message: 'Usuários recebidos com sucesso',
+            message: 'Produto atualizado com sucesso',
             data: result
         })
     } catch (err) {
-        res.status(500).send('Não foi possivel listar os usuários!');
+        next(err.message)
     }
 }))
 
-router.put('/update/user', (async (req, res, next) => {
+router.put('/delete', (async (req, res, next) => {
     try {
-        let result = await controller.updateUser(req.body.id, req.body.name, req.body.user, req.body.password, req.body.profile).catch(err => { throw new Error(err) })
+        let result = await controller.inativeProduct(req.body.id, req.body.name, req.body.description, req.body.price, req.body.category, req.body.quantity, req.body.imageName).catch(err => { throw new Error(err) })
         res.status(200).send({
-            message: 'Usuário atualizado com sucesso',
+            message: 'Produto deletado com sucesso',
             data: result
         })
     } catch (err) {
-        res.status(500).send('Não foi possivel atualizado o usuário!');
-    }
-}))
-
-router.delete('/delete/user', (async (req, res, next) => {
-    try {
-        let result = await controller.deleteUser(req.body.id).catch(err => { throw new Error(err) })
-        res.status(200).send({
-            message: 'Usuário deletado com sucesso',
-            data: result
-        })
-    } catch (err) {
-        res.status(500).send('Não foi possivel deletar o usuário!');
+        next(err.message)
     }
 }))
 

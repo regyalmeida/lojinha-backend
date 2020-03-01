@@ -18,8 +18,6 @@ let registerProduct = function (name, description, price, category, quantity) {
                 return reject('Produto já cadastrado')
             }
 
-            // TODO: chamar controller do COS para armazenar a imagem lá
-            // let x = await cosController.getItem(COS_BUCKET, 'zy12a.jpg')
             let fileName = Math.random().toString(36).substring(7);
             let filePath = fileController.getFileFromFolder()
             var itemName = await cosController.createImageFile(COS_BUCKET, fileName, filePath)
@@ -30,7 +28,8 @@ let registerProduct = function (name, description, price, category, quantity) {
                 price: price,
                 imageName: itemName,
                 category: category,
-                quantity: quantity
+                quantity: quantity,
+                flag: 'active'
             })
             let product = await newProduct.save()
             return resolve(product)
@@ -54,7 +53,7 @@ let recoverProduct = function (id) {
             resolve(products)
 
         } catch (err) {
-            reject('Erro ao listar os produtos: ' + err)
+            throw(err)
         }
     })
 }
@@ -66,44 +65,42 @@ database
 let listProducts = function () {
     return new Promise(async function (resolve, reject) {
         try {
-            let products = await Product.find({}, {
+            let products = await Product.find({flag:'active'}, {
                 __v: 0
             })
 
             resolve(products)
 
         } catch (err) {
-            reject('Erro ao listar os produtos: ' + err)
+            throw(err)
         }
     })
 }
+
 
 /* ------------------ updateUser ----------------------
 Update a existing iser document on the database, finded 
 by its ID
 ------------------------------------------------------- */
-let updateUser = function (id, name, user, password, profile) {
+let updateProduct = function (id, name, description, price, category, quantity, imageName, flag) {
     return new Promise(async function (resolve, reject) {
         try {
 
-            var usuario = {
+            var newProduct = {
                 name: name,
-                user: user,
-                profile: profile
+                description: description,
+                price: price,
+                imageName: imageName,
+                category: category,
+                quantity: quantity,
+                flag: flag
             }
-            if (password) {
-                usuario.password = createHash(password)
-            }
-
-            let userDocument = await User.findByIdAndUpdate(id, usuario, {
-                new: true,
-                fields: {
-                    password: 0,
-                    __v: 0
-                }
+           
+            let produto = await Product.findByIdAndUpdate(id, newProduct, {
+                new: true            
             })
 
-            resolve(userDocument)
+            resolve(produto)
 
         } catch (err) {
             reject('Erro ao atualizar o usuário: ' + err)
@@ -111,19 +108,30 @@ let updateUser = function (id, name, user, password, profile) {
     })
 }
 
-/* ----------------- deleteUser ----------------------
+/* ----------------- deleteProduct ----------------------
 Delete a existing user document on the database, finded 
 by its ID
 ------------------------------------------------------- */
-let deleteUser = function (id, profile) {
+let inativeProduct = function (id, name, description, price, category, quantity, imageName) {
     return new Promise(async function (resolve, reject) {
         try {
-            let usuario = await User.findByIdAndRemove(id)
+            var newProduct = {
+                name: name,
+                description: description,
+                price: price,
+                imageName: imageName,
+                category: category,
+                quantity: quantity,
+                flag: 'inative'
+            }
+            let produto = await Product.findByIdAndUpdate(id, newProduct, {
+                new: true            
+            })
 
-            resolve(usuario)
+            resolve(produto)
 
         } catch (err) {
-            reject('Erro ao atualizar o usuário: ' + err)
+            throw(err)
         }
     })
 }
@@ -132,7 +140,7 @@ let deleteUser = function (id, profile) {
 module.exports = {
     registerProduct: registerProduct,
     recoverProduct: recoverProduct, 
-    listProducts: listProducts
-    // updateUser: updateUser,
-    // deleteUser: deleteUser
+    listProducts: listProducts,
+    updateProduct: updateProduct,
+    inativeProduct: inativeProduct
 }
