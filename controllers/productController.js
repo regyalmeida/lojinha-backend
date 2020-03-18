@@ -25,10 +25,10 @@ let registerProduct = function (name, description, price, category, quantity) {
             var newProduct = await new Product({
                 name: name,
                 description: description,
-                price: price,
+                price: parseInt(price),
                 imageName: itemName,
                 category: category,
-                quantity: quantity,
+                quantity: parseInt(quantity),
                 flag: 'active'
             })
             let product = await newProduct.save()
@@ -47,6 +47,25 @@ let recoverProduct = function (id) {
     return new Promise(async function (resolve, reject) {
         try {
             let products = await Product.find({_id: id}, {
+                __v: 0
+            })
+
+            resolve(products)
+
+        } catch (err) {
+            throw(err)
+        }
+    })
+}
+
+/* -------------------- listActiveProducts ----------------------- 
+Retrieves all existing products documents from the 
+database
+------------------------------------------------------- */
+let listActiveProducts = function () {
+    return new Promise(async function (resolve, reject) {
+        try {
+            let products = await Product.find({}, {
                 __v: 0
             })
 
@@ -78,25 +97,17 @@ let listProducts = function () {
 }
 
 
+
+
 /* ------------------ updateUser ----------------------
 Update a existing iser document on the database, finded 
 by its ID
 ------------------------------------------------------- */
-let updateProduct = function (id, name, description, price, category, quantity, imageName, flag) {
+let updateProduct = function (newProduct) {
     return new Promise(async function (resolve, reject) {
         try {
-
-            var newProduct = {
-                name: name,
-                description: description,
-                price: price,
-                imageName: imageName,
-                category: category,
-                quantity: quantity,
-                flag: flag
-            }
            
-            let produto = await Product.findByIdAndUpdate(id, newProduct, {
+            let produto = await Product.updateOne({_id:newProduct.id}, newProduct, {
                 new: true            
             })
 
@@ -108,24 +119,39 @@ let updateProduct = function (id, name, description, price, category, quantity, 
     })
 }
 
-/* ----------------- deleteProduct ----------------------
+/* ----------------- inactiveProduct ----------------------
 Delete a existing user document on the database, finded 
 by its ID
 ------------------------------------------------------- */
-let inativeProduct = function (id, name, description, price, category, quantity, imageName) {
+let inactiveProduct = function (_id) {
     return new Promise(async function (resolve, reject) {
         try {
             var newProduct = {
-                name: name,
-                description: description,
-                price: price,
-                imageName: imageName,
-                category: category,
-                quantity: quantity,
                 flag: 'inative'
             }
-            let produto = await Product.findByIdAndUpdate(id, newProduct, {
-                new: true            
+            let produto = await Product.updateOne({_id: _id}, newProduct, {
+                upsert: true            
+            })
+
+            resolve(produto)
+
+        } catch (err) {
+            throw(err)
+        }
+    })
+}
+
+/* ----------------- activeProduct ----------------------
+
+------------------------------------------------------- */
+let activeProduct = function (_id) {
+    return new Promise(async function (resolve, reject) {
+        try {
+            var newProduct = {
+                flag: 'active'
+            }
+            let produto = await Product.updateOne({_id: _id}, newProduct, {
+                upsert: true            
             })
 
             resolve(produto)
@@ -138,9 +164,11 @@ let inativeProduct = function (id, name, description, price, category, quantity,
 
 
 module.exports = {
-    registerProduct: registerProduct,
-    recoverProduct: recoverProduct, 
-    listProducts: listProducts,
-    updateProduct: updateProduct,
-    inativeProduct: inativeProduct
+    registerProduct,
+    recoverProduct,
+    listProducts,
+    updateProduct,
+    inactiveProduct,
+    activeProduct,
+    listActiveProducts
 }

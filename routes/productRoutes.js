@@ -30,8 +30,20 @@ router.get('/recover/', (async (req, res, next) => {
             var result = await controller.recoverProduct(req.query.id).catch(err => { throw new Error(err) })
         }
         else {
-            var result = await controller.listProducts().catch(err => { throw new Error(err) })
+            var result = await controller.listActiveProducts().catch(err => { throw new Error(err) })
         }
+        res.status(200).send({
+            message: 'Produto(s) recuperado(s) com sucesso',
+            data: result
+        })
+    } catch (err) {
+        next(err.message)
+    }
+}))
+
+router.get('/recover/active', (async (req, res, next) => {
+    try {
+        var result = await controller.listProducts().catch(err => { throw new Error(err) })
         res.status(200).send({
             message: 'Produto(s) recuperado(s) com sucesso',
             data: result
@@ -43,7 +55,7 @@ router.get('/recover/', (async (req, res, next) => {
 
 router.put('/update', (async (req, res, next) => {
     try {
-        let result = await controller.updateProduct(req.body.id, req.body.name, req.body.description, req.body.price, req.body.category, req.body.quantity, req.body.imageName, req.body.flag).catch(err => { throw new Error(err) })
+        let result = await controller.updateProduct(req.body).catch(err => { throw new Error(err) })
         res.status(200).send({
             message: 'Produto atualizado com sucesso',
             data: result
@@ -53,11 +65,23 @@ router.put('/update', (async (req, res, next) => {
     }
 }))
 
-router.put('/delete', (async (req, res, next) => {
+router.put('/inactive', (async (req, res, next) => {
     try {
-        let result = await controller.inativeProduct(req.body._id, req.body.name, req.body.description, req.body.price, req.body.category, req.body.quantity, req.body.imageName).catch(err => { throw new Error(err) })
+        let result = await controller.inactiveProduct(req.body._id).catch(err => { throw new Error(err) })
         res.status(200).send({
-            message: 'Produto deletado com sucesso',
+            message: 'Produto inativado com sucesso',
+            data: result
+        })
+    } catch (err) {
+        next(err.message)
+    }
+}))
+
+router.put('/active', (async (req, res, next) => {
+    try {
+        let result = await controller.activeProduct(req.body._id).catch(err => { throw new Error(err) })
+        res.status(200).send({
+            message: 'Produto ativado com sucesso',
             data: result
         })
     } catch (err) {
