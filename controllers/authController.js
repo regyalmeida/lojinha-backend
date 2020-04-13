@@ -47,6 +47,10 @@ let registerUser = function (name, user, password, profile, maillingAddress, bil
                 cpf: cpf
             })
 
+            let usuarioEmail = await User.findOne({
+                email: email
+            })
+
             if (usuario || usuarioCpf) {
                 return reject('Usuário já cadastrado')
             }
