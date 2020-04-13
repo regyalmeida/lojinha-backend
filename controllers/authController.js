@@ -51,9 +51,15 @@ let registerUser = function (name, user, password, profile, maillingAddress, bil
                 email: email
             })
 
-            if (usuario || usuarioCpf || usuarioEmail) {
-                return reject('Usuário já cadastrado')
+            if(profile == 'cliente') {
+                if(usuario || usuarioCpf || usuarioEmail) 
+                    return reject('Usuário já cadastrado')
+            } else {
+                if (usuario) {
+                    return reject('Usuário já cadastrado')
+                }
             }
+                
 
             //Cria e salva um novo usuário
             var newUser = new User({
