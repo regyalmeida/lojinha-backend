@@ -35,7 +35,7 @@ let loginUser = function (user, password) {
 /* --------------- registerUser ----------------------- 
 Create a new user document register and on the database
 ------------------------------------------------------- */
-let registerUser = function (name, user, password, profile) {
+let registerUser = function (name, user, password, profile, maillingAddress, billingAddress, email, cpf) {
     return new Promise(async function (resolve, reject) {
         try {
             //Verifica se o usuário já existe
@@ -43,7 +43,11 @@ let registerUser = function (name, user, password, profile) {
                 user: user
             })
 
-            if (usuario) {
+            let usuarioCpf = await User.findOne({
+                cpf: cpf
+            })
+
+            if (usuario || usuarioCpf) {
                 return reject('Usuário já cadastrado')
             }
 
@@ -52,7 +56,11 @@ let registerUser = function (name, user, password, profile) {
                 name: name,
                 user: user,
                 password: createHash(password),
-                profile: profile
+                profile: profile,
+                maillingAddress: maillingAddress,
+                billingAddress: billingAddress,
+                email: email,
+                cpf: cpf
             })
             return resolve(newUser.save())
 
@@ -86,14 +94,16 @@ let listUsers = function (profile) {
 Update a existing iser document on the database, finded 
 by its ID
 ------------------------------------------------------- */
-let updateUser = function (id, name, user, password, profile) {
+let updateUser = function (id, name, user, password, profile, maillingAddress, billingAddress) {
     return new Promise(async function (resolve, reject) {
         try {
 
             var usuario = {
                 name: name,
                 user: user,
-                profile: profile
+                profile: profile,
+                maillingAddress: maillingAddress,
+                billingAddress: billingAddress
             }
             if(password) {
                 usuario.password =  createHash(password)

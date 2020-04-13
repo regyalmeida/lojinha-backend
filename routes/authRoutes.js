@@ -4,7 +4,7 @@ let router = require('express').Router()
 
 router.post('/register/user', (async (req, res, next) => {
     try {
-        let result = await controller.registerUser(req.body.name, req.body.user, req.body.password, req.body.profile).catch(err => { throw new Error(err) })
+        let result = await controller.registerUser(req.body.name, req.body.user, req.body.password, req.body.profile, req.body.maillingAddress, req.body.billingAddress, req.body.email, req.body.cpf).catch(err => { throw new Error(err) })
         res.status(200).send({
             message: 'Usuário cadastrado com sucesso',
             data: {
@@ -12,7 +12,8 @@ router.post('/register/user', (async (req, res, next) => {
                 name: result.name,
                 user: result.user,
                 password: result.password,
-                profile: result.profile
+                profile: result.profile,
+                attributes: result.attributes
             }
         })
     } catch (err) {
@@ -48,7 +49,7 @@ router.get('/recover/users', (async (req, res, next) => {
 
 router.put('/update/user', (async (req, res, next) => {
     try {
-        let result = await controller.updateUser(req.body.id, req.body.name, req.body.user, req.body.password, req.body.profile).catch(err => { throw new Error(err) })
+        let result = await controller.updateUser(req.body.id, req.body.name, req.body.user, req.body.password, req.body.profile, req.body.maillingAddress, req.body.billingAddress).catch(err => { throw new Error(err) })
         res.status(200).send({
             message: 'Usuário atualizado com sucesso',
             data: result
