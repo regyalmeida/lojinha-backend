@@ -6,11 +6,11 @@ var bCrypt = require('bcrypt-nodejs')
 Verify if a given user and pass are valid and return 
 the result, allowing or not the successfully login
 ------------------------------------------------------- */
-let loginUser = function (user, password) {
+let loginUser = function (email, password) {
     return new Promise(async function (resolve, reject) {
         try {
             let usuario = await User.findOne({
-                user: user
+                email: email
             })
 
             if (!usuario) return resolve(['Usuário não cadastrado', false, null])
@@ -100,6 +100,23 @@ let listUsers = function (profile) {
     })
 }
 
+/* -------------------- getUser ----------------------- 
+------------------------------------------------------- */
+let getUser = function (username) {
+    return new Promise(async function (resolve, reject) {
+        try {
+            let usuario = await User.find({user: username}, {
+                __v: 0
+            })
+
+            resolve(usuario)
+
+        } catch (err) {
+            reject('Erro ao listar o usuário: ' + err)
+        }
+    })
+}
+
 /* ------------------ updateUser ----------------------
 Update a existing iser document on the database, finded 
 by its ID
@@ -116,7 +133,9 @@ let updateUser = function (id, name, user, password, profile, maillingAddress, b
                 billingAddress: billingAddress
             }
             if(password) {
-                usuario.password =  createHash(password)
+                let validate = password.indexOf('$')
+                if(validate != 0) {
+                    usuario['password']=  createHash(password)}
             }
 
             let userDocument = await User.findByIdAndUpdate(id, usuario , {
@@ -162,7 +181,7 @@ var createHash = function (password) {
 /* -------------- isValidPassword ----------------------
 Validates a given password, using bCrypt
 ------------------------------------------------------- */
-var isValidPassword = function (usuario, password) {
+var isValidPassword = function (usuario, password) {    
     return bCrypt.compareSync(password, usuario.password);
 }
 
@@ -170,6 +189,7 @@ module.exports = {
     registerUser: registerUser,
     loginUser: loginUser,
     listUsers: listUsers,
+    getUser:getUser,
     updateUser: updateUser,
     deleteUser: deleteUser
 }

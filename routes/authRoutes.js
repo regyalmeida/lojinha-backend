@@ -23,7 +23,7 @@ router.post('/register/user', (async (req, res, next) => {
 
 router.post('/login', (async (req, res, next) => {
     try {
-        let result = await controller.loginUser(req.body.user, req.body.password).catch(err => { throw new Error(err) })
+        let result = await controller.loginUser(req.body.email, req.body.password).catch(err => { throw new Error(err) })
         res.status(200).send({
             message: result[0],
             autenticado: result[1],
@@ -44,6 +44,19 @@ router.get('/recover/users', (async (req, res, next) => {
         })
     } catch (err) {
         res.status(500).send('Não foi possivel listar os usuários!');
+    }
+}))
+
+router.get('/recover/user', (async (req, res, next) => {
+    try {
+
+        let result = await controller.getUser(req.query.username).catch(err => { throw new Error(err) })
+        res.status(200).send({
+            message: 'Usuário recebido com sucesso',
+            data: result
+        })
+    } catch (err) {
+        res.status(500).send('Não foi possivel listar o usuário!');
     }
 }))
 
