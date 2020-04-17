@@ -13,6 +13,7 @@ const appEnv = cfenv.getAppEnv()
 const authRoutes = require('./routes/authRoutes')
 const productRoutes = require('./routes/productRoutes')
 const faqRoutes = require('./routes/faqRoutes')
+const validatorRoutes = require('./routes/validatorRoutes')
 
 //Import connector files
 const mongoConnector = require('./connectors/mongoConnector')
@@ -31,6 +32,7 @@ mongoConnector.mongoConnect()
 app.use('/api/auth', authRoutes)
 app.use('/api/product', productRoutes)
 app.use('/api/faq', faqRoutes)
+app.use('/api/validator', validatorRoutes)
 
 //Error middleware
 app.use((error, req, res, next) => {
