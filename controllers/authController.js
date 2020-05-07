@@ -55,7 +55,7 @@ let registerUser = function (name, user, password, profile, maillingAddress, bil
                 if(usuario || usuarioCpf || usuarioEmail) 
                     return reject('Usuário já cadastrado')
             } else {
-                if (usuario) {
+                if (usuario || usuarioEmail) {
                     return reject('Usuário já cadastrado')
                 }
             }

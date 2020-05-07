@@ -14,6 +14,7 @@ const authRoutes = require('./routes/authRoutes')
 const productRoutes = require('./routes/productRoutes')
 const faqRoutes = require('./routes/faqRoutes')
 const validatorRoutes = require('./routes/validatorRoutes')
+const shoppingRoutes = require('./routes/shoppingRoutes')
 
 //Import connector files
 const mongoConnector = require('./connectors/mongoConnector')
@@ -33,6 +34,7 @@ app.use('/api/auth', authRoutes)
 app.use('/api/product', productRoutes)
 app.use('/api/faq', faqRoutes)
 app.use('/api/validator', validatorRoutes)
+app.use('/api/shop', shoppingRoutes)
 
 //Error middleware
 app.use((error, req, res, next) => {
