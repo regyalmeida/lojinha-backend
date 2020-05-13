@@ -53,14 +53,38 @@ let checkout = async function (purchaseOrder) {
 /* -------------------- listOrders ----------------------- 
 
 ------------------------------------------------------- */
-let listOrders = function (user) {
+let listOrders = async function (user) {
   return new Promise(async function (resolve, reject) {
       try {
           let orders = await Shopping.find({user: user}, {
               __v: 0
           })
 
-          resolve(orders)
+          
+          // JSON.stringify(orders)
+
+          let ordersTreated = await orders.map( (currentOrder,index) =>{
+            let newDateFormat = new Date(currentOrder.date)
+            newDateFormat = newDateFormat.toISOString()
+
+            let newOrder = {
+              "_id": currentOrder._id,
+              "itens": currentOrder.itens,
+              "user": currentOrder.user,
+              "checkoutCode": currentOrder.checkoutCode,
+              "status": currentOrder.status,
+              "date": newDateFormat,
+              "freight": currentOrder.freight,
+              "totalPrice": currentOrder.totalPrice,
+              "shippingAddress": currentOrder.shippingAddress
+          }
+
+            return newOrder
+          })
+
+          await Promise.all(ordersTreated)
+          
+          resolve(ordersTreated.reverse())
 
       } catch (err) {
           reject('Erro ao listar os usuários: ' + err)
