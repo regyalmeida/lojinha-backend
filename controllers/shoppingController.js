@@ -1,6 +1,9 @@
 var Shopping = require('../models/shopping')
 const uniqid = require('uniqid');
 
+var moment = require('moment-timezone');
+moment().tz("America/Sao_Paulo").format();
+
 /* -------------------- cepValidator ----------------------- 
 ------------------------------------------------------- */
 let freightCalculator = async function (cep) {
@@ -37,7 +40,7 @@ let checkout = async function (purchaseOrder) {
       itens: purchaseOrder.itens,
       checkoutCode: uniqid(),
       status: "Aguargando Pagamento",
-      date: Date.now(),
+      date: moment.now(),
       freight: purchaseOrder.freight,
       totalPrice: purchaseOrder.totalPrice,
       shippingAddress: purchaseOrder.shippingAddress,
@@ -53,19 +56,16 @@ let checkout = async function (purchaseOrder) {
 /* -------------------- listOrders ----------------------- 
 
 ------------------------------------------------------- */
-let listOrders = async function (user) {
+let listOrdersByUser = async function (user) {
   return new Promise(async function (resolve, reject) {
       try {
           let orders = await Shopping.find({user: user}, {
               __v: 0
           })
 
-          
-          // JSON.stringify(orders)
-
           let ordersTreated = await orders.map( (currentOrder,index) =>{
-            let newDateFormat = new Date(currentOrder.date)
-            newDateFormat = newDateFormat.toISOString()
+            let newDateFormat = moment(currentOrder.date).tz("America/Sao_Paulo").format("DD/MM/YYYY, HH:mm")
+            newDateFormat = newDateFormat.split(",")
 
             let newOrder = {
               "_id": currentOrder._id,
@@ -73,7 +73,7 @@ let listOrders = async function (user) {
               "user": currentOrder.user,
               "checkoutCode": currentOrder.checkoutCode,
               "status": currentOrder.status,
-              "date": newDateFormat,
+              "dateTime": {date: newDateFormat[0], time:newDateFormat[1]},
               "freight": currentOrder.freight,
               "totalPrice": currentOrder.totalPrice,
               "shippingAddress": currentOrder.shippingAddress
@@ -92,8 +92,65 @@ let listOrders = async function (user) {
   })
 }
 
+let listAllOrders = async function (user) {
+  return new Promise(async function (resolve, reject) {
+      try {
+          let orders = await Shopping.find({}, {
+              __v: 0
+          })
+
+          let ordersTreated = await orders.map( (currentOrder,index) =>{
+            let newDateFormat = moment(currentOrder.date).tz("America/Sao_Paulo").format("DD/MM/YYYY, HH:mm")
+            newDateFormat = newDateFormat.split(",")
+
+            let newOrder = {
+              "_id": currentOrder._id,
+              "itens": currentOrder.itens,
+              "user": currentOrder.user,
+              "checkoutCode": currentOrder.checkoutCode,
+              "status": currentOrder.status,
+              "dateTime": {date: newDateFormat[0], time:newDateFormat[1]},
+              "freight": currentOrder.freight,
+              "totalPrice": currentOrder.totalPrice,
+              "shippingAddress": currentOrder.shippingAddress
+          }
+
+            return newOrder
+          })
+
+          await Promise.all(ordersTreated)
+          
+          resolve(ordersTreated.reverse())
+
+      } catch (err) {
+          reject('Erro ao listar os usuários: ' + err)
+      }
+  })
+}
+
+let updateOrder = function (payload) {
+  return new Promise(async function (resolve, reject) {
+      try {
+
+        let order = { status: payload.status}
+        
+          let orderDocument = await Shopping.findOneAndUpdate(payload.checkoutCode, order , {
+              new: true,              
+          })
+
+          resolve(orderDocument)
+
+      } catch (err) {
+          reject('Erro ao atualizar o pedido: ' + err)
+      }
+  })
+}
+
+
 module.exports = {
   freightCalculator,
   checkout,
-  listOrders
+  listOrdersByUser,
+  listAllOrders,
+  updateOrder
 }
