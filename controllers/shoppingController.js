@@ -134,7 +134,7 @@ let updateOrder = function (payload) {
 
         let order = { status: payload.status}
         
-          let orderDocument = await Shopping.findOneAndUpdate(payload.checkoutCode, order , {
+          let orderDocument = await Shopping.findOneAndUpdate( {checkoutCode: payload.checkoutCode}, order , {
               new: true,              
           })
 
